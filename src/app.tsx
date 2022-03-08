@@ -1,34 +1,27 @@
 import React, { useEffect } from 'react';
-import { setPixiRoot } from '@store/pixi/pixi';
-import { onMouseMoveHandler } from '@store/pixi/cursorPosition';
-import { onWheel } from '@store/pixi/scrollPosition';
-import cx from 'clsx';
-import { $cursorType } from '@store/pixi/cursorType';
 import { useStore } from 'effector-react';
-import { onClickStart } from '@store/pixi/pixiOnClick';
-
-import styles from './app.scss';
+import CommonScene from '@components/commonScene';
+import Layout from '@components/Layout';
+import { $atomMap, $moduleMap } from '@store/sourceMaps';
+import { $canvasJSON, $JSON } from '@store/fabric/canvasJSON';
+import { initApp } from '@store/fabric/fabric';
 
 const App = () => {
-  const cursorType = useStore($cursorType);
+  const atomMap = useStore($atomMap);
+  const moduleMap = useStore($moduleMap);
+  const canvasJSON = useStore($canvasJSON);
+  const json = useStore($JSON);
+  const events = { initApp };
 
   useEffect(() => {
-    document.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => {
-      document.addEventListener('wheel', onWheel, { passive: false });
-    };
+    events.initApp();
   }, []);
 
   return (
     <div>
-      <div
-        className={cx(styles[`pixiRoot__cursor_${cursorType}`])}
-        ref={setPixiRoot}
-        onMouseMove={onMouseMoveHandler}
-        onClick={onClickStart}
-      />
-      <span style={{ position: 'fixed', right: 0, bottom: 0, backgroundColor: 'white' }} id="debug" />
+      <Layout atomMap={atomMap} moduleMap={moduleMap} canvasJSON={canvasJSON} json={json}>
+        <CommonScene />
+      </Layout>
     </div>
   );
 };
